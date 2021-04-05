@@ -1,0 +1,37 @@
+Pour lancer l'application, je me rends sous le répertoire soneka puis j'inscris
+python manage.py migrate
+ensuite 
+python manage.py runserver
+
+http://127.0.0.1:8000/admin/ --> accéder à la BDD en tant qu'admin
+On peut observer les 4 tables:
+
+Bagels qui est vide : les bagels sont ajoutés en brut via le fichier commander.html
+
+Clients
+
+Commandes : dont le premier identifiant sera aux alentours de 40-50 (j'ai créé des commandes que j'ai supprimé mais les id 
+																	 ne reviennent pas à 1 ) 
+																	 
+Complements																	 
+				
+
+Les identifiants sont affectés automatiquement
+				
+Important : je n'ai pas réussi à faire en sorte qu'un bagel ait plusieurs suppléments:
+	j'ai voulu faire des checkbox puis stocker cela dans une liste ( puis convertit en tuple ) 
+	mais je n'ai pas réussi à créer une ligne de liste de Complements dans la table Bagel 
+	Au final, chaque bagel n'aura qu'un seul complément
+
+La contrainte d'unicité est respectée : Chaque commande est affectée à un seul client
+La gestion est stock est également respectée: le stock d'un complément décrémente à chaque commande
+
+http://127.0.0.1:8000/polls/  --> index.html
+
+http://127.0.0.1:8000/polls/commander --> commander.html
+
+http://127.0.0.1:8000/polls/supprimer --> supprimer.html
+
+Amélioration possible : esthétique des pages html		
+						création d'une liste de bagels dans la commande et liste de compléments dans le bagel
+						une page 'statistique'

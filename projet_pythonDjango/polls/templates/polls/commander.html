@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title></title>
+</head>
+<body>
+	<form action="{% url 'polls:commander' %}" method="POST">
+		{% csrf_token %}
+		<h2>Commandez votre bagel !</h2>
+	  <div class="row">
+	    <div class="col-sm-6">
+	      <input name="client" type="text" class="form-control" placeholder="Votre identifiant">
+	    </div>
+	    <div class="col-sm-6">
+	      <input name="adresse" type="text" class="form-control" placeholder="Adresse">
+	    </div>
+	  </div>
+	     <div class="form-group">
+            <label for="selection">Bagel</label>
+                <select class="form-control" name="bagel">
+                	<option></option>
+            		<option id="1" value="complet">Complet</option>
+            		<option id="2" value="italien">Italien</option>
+            		<option id="3" value="normal">Normal</option>
+            		<option id="4" value="bio">Bio</option>
+            		<option id="5" value="campagnard">Campagnard</option>
+               </select>
+
+            <label for="selection">Complement</label>
+                <select class="form-control" name="complement">
+                		<option></option>
+                	{% for complement in liste_complement %}
+                	
+                		<option  id="{{ forloop.counter}}" value="{{ complement.idComplement }}">{{ complement.nomComplement }}</option>
+	                {% endfor %}
+                </select>
+
+        </div>
+        <button type="submit" class="btn btn-primary">Valider</button>	
+
+
+	</form>
+
+	<br>
+		<button type="submit" class="btn btn-danger" formaction="{% url 'polls:supprimer' %}">Supprimer</button>  
+	<br>
+	<br>
+		<form action="{% url 'polls:index' %}" method="POST">
+			<button type="submit" class="btn btn-secondary">Retour</button>	
+		</form>
+
+	<script type="text/javascript">
+		{% if success != False %}
+			alert("{{ success }}");
+		{% endif %}
+	</script>	
+</body>
+</html>

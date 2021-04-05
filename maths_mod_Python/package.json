@@ -1,0 +1,24 @@
+{
+  "name": "maths_mod",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-queue": "^3.8.10",
+    "body-parser": "^1.19.0",
+    "dsp.js": "^1.0.1",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6-alpha.6",
+    "fluent-ffmpeg": "^2.1.2",
+    "helmet": "^3.21.2",
+    "lodash": "^4.17.15",
+    "mysql": "^2.17.1",
+    "sha1": "^1.1.1",
+    "walk": "^2.3.14"
+  }
+}

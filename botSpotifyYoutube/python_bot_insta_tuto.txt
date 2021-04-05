@@ -1,0 +1,6 @@
+path vers le fichier python :
+C:\botSpotifyYoutube\botSpotify.py
+
+path vers python.exe : C:\Users\Daran V\AppData\Local\Programs\Python\Python38-32 
+
+juste apres ce path on ecris python.exe et on met le path du fichier

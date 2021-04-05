@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projet Maths Modulaire</title>
+
+    <link href="http://pweb.guillaumechalons.fr/assets/teacher/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="http://pweb.guillaumechalons.fr/assets/teacher/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="http://pweb.guillaumechalons.fr/assets/teacher/css/datatables.css" />
+	
+	<style>
+	#tab .tab-content {
+  background-color: #428bca;
+  padding : 10px 0px;
+}
+
+#tab .nav-pills > li > a {
+  border-radius: 0;
+}
+	
+	li {
+    margin-bottom: 0px !important;
+}
+	
+	</style>
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+	<div class="container" style="padding-top: 50px;"><h1>Reconnaissance de morceaux de musique</h1></div>
+	<div id="tab" class="container">	
+		<ul  class="nav nav-pills">
+			<li class="active">
+				<a  href="#bdd" data-toggle="tab">Base de données</a>
+			</li>
+			<li>
+				<a href="#new" data-toggle="tab">Enregistrer une musique</a>
+			</li>
+			<li>
+				<a href="#search" data-toggle="tab">Chercher une musique</a>
+			</li>
+		</ul>
+
+		<div class="tab-content clearfix">
+			<div class="tab-pane active" id="bdd">
+				<div class="col-md-12">
+					<div class="widget-container fluid-height clearfix">
+						<div class="widget-content padded clearfix">
+							<table id="songstable" class="table table-bordered table-striped">
+								<thead>
+								  <tr>
+									<th>#</th>
+									<th>Titre</th>
+									<th>Auteur</th>
+									<th>Nombre d'empreintes</th>
+									<th>Date de traitement</th>
+									<th></th>
+								  </tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="new">
+				<div class="col-md-12">
+					<div class="widget-container fluid-height clearfix">
+						<div class="widget-content padded clearfix">
+							<h3>Traiter un nouveau son</h3>
+							<div id="upload">
+								<form id="uploadForm">
+									<div class="form-group">
+								  <input type="file" name="sampleFile" class="form-control" />
+								  </div>
+								  <button type="submit" class="btn btn-primary">Enregistrer</button>
+								</form>
+							</div>
+							<div id="result"></div>
+							  <div id="config" style="display: none;">
+								<form id="configForm">
+								  <legend>Configuration</legend>
+								  <div class="form-group">
+									<label for="">Titre</label>
+									<input
+									  type="text"
+									  class="form-control"
+									  id="title"
+									  name="title"
+									  placeholder="Titre de la musique"
+									/>
+								  </div>
+								  <div class="form-group">
+									<label for="">Artiste(s)</label>
+									<input
+									  type="text"
+									  class="form-control"
+									  id="artist"
+									  name="artist"
+									  placeholder="Artiste(s) de la musique"
+									/>
+								  </div>
+								  <input type="hidden" id="tmp_id" name="tmp_id" />
+								  <input
+									type="submit"
+									class="btn btn-primary"
+									value="Sauvegarder"
+								  />
+								</form>
+							  </div>
+							  <div id="convert" style="display: none;">
+								<i
+								  class="fa fa-spinner fa-spin fa-3x"
+								  aria-hidden="true"
+								  id="convertloader"
+								></i>
+							  </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="search">
+				<div class="col-md-12">
+					<div class="widget-container fluid-height clearfix">
+						<div class="widget-content padded clearfix">
+							<h3>Rechercher une musique</h3>
+				
+							<div id="upload2">
+								<form id="uploadForm2">
+									<div class="form-group">
+								  <input type="file" name="sampleFile" class="form-control" />
+								  </div>
+									<button type="submit" class="btn btn-primary">Rechercher</button>
+								</form>
+							</div>
+							
+							<div id="result2"></div>
+							
+							<div id="search2" style="display: none;">
+								<i class="fa fa-spinner fa-spin fa-3x" aria-hidden="true" id="searchLoader"></i>
+								<div id="resultList"></div>
+								<br>
+								<a id="resetsearch" class="btn btn-primary">Faire une autre recherche</a>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+  
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script>
+		var table = $("#songstable").DataTable({
+			"sPaginationType": "full_numbers",
+			aoColumnDefs: [
+				{
+					bSortable: false,
+					aTargets: [-1]
+				}
+			]
+		});
+		
+		var song_id = "";
+		
+		$("#resetsearch").click(() => {
+			$("#upload2").show();
+			 $("#search2").hide();
+			$("#resultList").html("");
+			$("#searchLoader").show();
+			$("#result2").html("");
+		});
+		
+      $(document).ready(() => {
+        $("#uploadForm2").submit(function(e) {
+			 $("#upload2").hide();
+			 $("#search2").show();
+			 $("#searchLoader").show();
+			 $("#resultList").html("");
+			 
+          e.preventDefault();
+          var formData = new FormData($(this)[0]);
+          $.ajax({
+            url: "/api/search",
+            type: "POST",
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            enctype: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+              if (!response.error) {
+                $("#result2").html(
+                  '<div class="alert alert-success">Correspondance trouvée en ' + response.time + 'ms !</div><br>'
+                );
+				
+				
+				for(var i = 0; i < response.results.length; i++){
+					$("#resultList").append("<p> - " + response.results[i].song_title + " de " + response.results[i].song_artist + " (correspondance à " + ((response.results[i].value /  response.count) * 100).toFixed(2) + "%)</p>");
+				}
+				
+				$("#searchLoader").hide();
+              } else {
+                $("#result2").html(
+                  '<div class="alert alert-danger">' +
+                    response.msg +
+                    "</div><br>"
+                );
+				$("#searchLoader").hide();
+              }
+            }
+          });
+        });
+		
+		$("#uploadForm").submit(function(e) {
+          e.preventDefault();
+          var formData = new FormData($(this)[0]);
+          $.ajax({
+            url: "/api/upload",
+            type: "POST",
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            enctype: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+              if (!response.error) {
+                $("#upload").hide();
+                $("#config").show();
+                $("#result").html(
+                  '<div class="alert alert-success">Fichier uploadé</div><br>'
+                );
+                $("#tmp_id").val(response.id);
+              } else {
+                $("#result").html(
+                  '<div class="alert alert-danger">' +
+                    response.msg +
+                    "</div><br>"
+                );
+              }
+            }
+          });
+        });
+
+        $("#configForm").submit(function(e) {
+          e.preventDefault();
+          var datas = $(this).serialize();
+          $.ajax({
+            url: "/api/generate",
+            type: "POST",
+            data: datas,
+            dataType: "json",
+            success: function(response) {
+              if (!response.error) {
+                $("#config").hide();
+                $("#convert").show();
+                $("#result").html(
+                  '<div class="alert alert-warning">En attente...</div><br>'
+                );
+                song_id = response.song_id;
+                setInterval(() => {
+                  fetch("/api/process/" + song_id)
+                    .then(response => response.text())
+                    .then(text => {
+                      var json = JSON.parse(text);
+                      if (json.msg.state == 0) {
+                        $("#result").html(
+                          '<div class="alert alert-warning">En attente...</div><br>'
+                        );
+                      } else if (json.msg.state == 1) {
+                        $("#result").html(
+                          '<div class="alert alert-warning">Génération des empreintes en cours...</div><br>'
+                        );
+                      } else if (json.msg.state == 2) {
+                        $("#result").html(
+                          '<div class="alert alert-success">Génération terminée (' +
+                            json.msg.nb +
+                            " empreintes générées). </div><br>"
+                        );
+                      } else if (json.msg.state == 3) {
+                        $("#result").html(
+                          '<div class="alert alert-warning">Sauvegarde en cours des  ' +
+                            json.msg.mysql +
+                            "/" +
+                            json.msg.nb +
+                            " empreintes. </div><br>"
+                        );
+                      } else if (json.msg.state == 4) {
+                        $("#result").html(
+                          '<div class="alert alert-success">Procéssus terminé</div><br>'
+                        );
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500);
+                      }
+                    });
+                }, 500);
+              } else {
+                $("#result").html(
+                  '<div class="alert alert-danger">' +
+                    response.msg +
+                    "</div><br>"
+                );
+              }
+            },
+            error: function(err) {
+              $("#result").html(
+                '<div class="alert alert-danger">Une erreur est survenue</div><br>'
+              );
+            }
+          });
+        });
+
+        fetch("/api/list-songs")
+          .then(response => response.text())
+          .then(text => {
+            var json = JSON.parse(text);
+            $("#songloader").hide();
+            if (json.size == 0) {
+              $("#songs").append(
+                '<div class="alert alert-warning">Aucun son traité pour le moment</div><br>'
+              );
+            } else {
+              for (var i = 0; i < json.size; i++) {
+                var el = json.data[i];
+                $("table").show();
+				table.row.add([
+					el.id,
+					el.title,
+					el.artist,
+					el.nb_fingerprint,
+					el.added_at,
+					'<a href=\"/stats/' + el.file_id +'\"><i class=\"fa fa-volume-up\"></i></a>'
+				]).draw();
+              }
+            }
+          });
+      });
+    </script>
+	
+  </body>
+</html>

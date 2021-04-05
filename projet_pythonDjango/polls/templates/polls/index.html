@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Soneka</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<form action="{% url 'polls:commander' %}">
+		{% csrf_token %}
+		<div class="container" class="col-sm-6">
+			<button type="submit" class="btn btn-primary">Commander</button>
+		</div>	
+	</form>
+
+	<br>
+
+	<form action="{% url 'polls:supprimer' %}">
+		{% csrf_token %}
+		<div class="container" class="col-sm-6">
+			<button type="submit" class="btn btn-danger" >Supprimer</button>
+		</div>
+	</form>
+
+</body>
+</html>
+
+
+
+
+
+<!-------------------
+
+<body>
+{% if liste_commande %}
+	<ul>
+		{% for c in liste_commande %}
+			<li><a href="/polls/supprimer/">{{c.adresse}}</a></li>
+		{% endfor%}
+	</ul>
+{% else %}
+<p>No polls are available</p>
+{% endif %}
+</body>
+
+---------------------->
